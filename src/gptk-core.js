@@ -2,7 +2,7 @@ import Api from './api/api.js';
 import ApiUtils from './api/api-utils.js';
 import { dateToHHMMSS, timeToHHMMSS, isPatternValid } from './utils/helpers.js';
 import log from './ui/logic/log.js';
-import { apiSettingsDefault } from './api/api-utils-deafault-presets.js';
+import { apiSettingsDefault } from './api/api-utils-default-presets.js';
 
 export default class Core {
   constructor() {
@@ -101,7 +101,7 @@ export default class Core {
     ) {
       mediaItems = await this.extendMediaItemsWithMediaInfo(mediaItems);
       if (mediaItems?.length && filter.fileNameRegex) mediaItems = this.fileNameFilter(mediaItems, filter);
-      if (mediaItems?.length && filter.descriptionRegex) mediaItems = this.desctiptionFilter(mediaItems, filter);
+      if (mediaItems?.length && filter.descriptionRegex) mediaItems = this.descriptionFilter(mediaItems, filter);
       if (mediaItems?.length && filter.space) mediaItems = this.spaceFilter(mediaItems, filter);
       if (mediaItems?.length && filter.quality) mediaItems = this.qualityFilter(mediaItems, filter);
       if (mediaItems?.length && (filter.lowerBoundarySize || filter.higherBoundarySize)) mediaItems = this.sizeFilter(mediaItems, filter);
@@ -228,7 +228,7 @@ export default class Core {
     return mediaItems;
   }
 
-  desctiptionFilter(mediaItems, filter) {
+  descriptionFilter(mediaItems, filter) {
     log('Filtering by description');
     const regex = new RegExp(filter.descriptionRegex);
     if (filter?.descriptionMatchType === 'include') mediaItems = mediaItems.filter((item) => regex.test(item.descriptionFull));
@@ -389,6 +389,7 @@ export default class Core {
         if (action.elementId === 'unArchive') await this.apiUtils.unArchive(mediaItems);
         if (action.elementId === 'toFavorite') await this.apiUtils.setAsFavorite(mediaItems);
         if (action.elementId === 'unFavorite') await this.apiUtils.unFavorite(mediaItems);
+        if (action.elementId === 'setDescToOther') await this.apiUtils.setDescriptionToOther(mediaItems);
         log(`Task completed in ${timeToHHMMSS(new Date() - startTime)}`, 'success');
       }
     } catch (error) {
